@@ -1,0 +1,1 @@
+projecthc12_blue_pill\startup_stm32f103xb.o: startup_stm32f103xb.s
