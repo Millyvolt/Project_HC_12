@@ -4,6 +4,7 @@
 "proj_nucleo\freertos.o"
 "proj_nucleo\stm32f1xx_it.o"
 "proj_nucleo\stm32f1xx_hal_msp.o"
+"proj_nucleo\stm32f1xx_hal_timebase_tim.o"
 "proj_nucleo\system_stm32f1xx.o"
 "proj_nucleo\stm32f1xx_hal_gpio_ex.o"
 "proj_nucleo\stm32f1xx_hal.o"
@@ -29,7 +30,6 @@
 "proj_nucleo\cmsis_os.o"
 "proj_nucleo\heap_4.o"
 "proj_nucleo\port.o"
-"proj_nucleo\retarget_io.o"
 --library_type=microlib --strict --scatter "proj_nucleo\proj_nucleo.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

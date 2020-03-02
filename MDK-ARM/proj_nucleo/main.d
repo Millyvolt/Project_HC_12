@@ -24,6 +24,8 @@ proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
 proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
+proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 proj_nucleo\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
@@ -39,4 +41,3 @@ proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-proj_nucleo\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

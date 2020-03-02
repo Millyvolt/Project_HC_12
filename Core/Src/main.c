@@ -21,8 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-//#include	"stm32f1xx_hal.h"
-#include	"stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -99,7 +97,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-	printf("Hello!!");
+
 
 
 
@@ -279,14 +277,43 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
+		
+	
+	
+	uint8_t	data[20];
+	
+	data[0] = 'H';
+	data[1] = 'I';
+	data[2] = '!';
+
   for(;;)
   {
-		printf("Hello\r\n");
+		//HAL_UART_Transmit(&huart2, data, 3, 1000);
 		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-    osDelay(500);
+    osDelay(1000);
   }
   /* USER CODE END 5 */ 
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM4 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM4) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
 
 /**
