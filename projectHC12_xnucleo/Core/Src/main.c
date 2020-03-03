@@ -381,34 +381,35 @@ void StartDefaultTask(void const * argument)
 		USART1->DR = 'T';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		USART1->DR = '+';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'R';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'X';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		osDelay(3000);
-		USART1->DR = 'A';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'T';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = '+';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'V';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
+		
+//		USART1->DR = '+';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'R';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'X';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		osDelay(3000);
+//		USART1->DR = 'A';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'T';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = '+';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'V';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
 		osDelay(200);
 		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
 		
 		
 		
-    osDelay(3000);
+    osDelay(5000);
   }
 	
 	

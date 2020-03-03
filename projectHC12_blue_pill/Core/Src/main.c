@@ -257,31 +257,51 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
+
+	
+	
+	uint8_t	counter=0;
+	
+	
   for(;;)
   {
 		
 
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		USART1->DR = 'H';
+		USART1->DR = 'S';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
 		USART1->DR = 'E';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		USART1->DR = 'L';
+		USART1->DR = 'N';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		USART1->DR = 'L';
+		USART1->DR = 'D';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		USART1->DR = 'O';
+		
+		USART1->DR = counter/100+48;
+		while(!(USART1->SR&USART_SR_TXE))
+			;
+		USART1->DR = counter%100/10+48;
+		while(!(USART1->SR&USART_SR_TXE))
+			;
+		USART1->DR = counter%100%10+48;
+		while(!(USART1->SR&USART_SR_TXE))
+			;
+		
+		USART1->DR = '\n';
+		while(!(USART1->SR&USART_SR_TXE))
+			;
+		USART1->DR = '\r';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
 		
 		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
-    osDelay(1000);
+		counter += 1;
+    osDelay(2000);
   }
   /* USER CODE END 5 */ 
 }
