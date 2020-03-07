@@ -17,6 +17,7 @@
 "proj_nucleo\stm32f1xx_hal_flash.o"
 "proj_nucleo\stm32f1xx_hal_flash_ex.o"
 "proj_nucleo\stm32f1xx_hal_exti.o"
+"proj_nucleo\stm32f1xx_hal_i2c.o"
 "proj_nucleo\stm32f1xx_hal_tim.o"
 "proj_nucleo\stm32f1xx_hal_tim_ex.o"
 "proj_nucleo\stm32f1xx_hal_uart.o"
