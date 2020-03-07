@@ -406,8 +406,11 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 
-		HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-		
+		for(uint16_t i=0; i<5; i++)
+		{
+			HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+			osDelay(1000);
+		}
 		
 		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
 		osDelay(200);
@@ -419,7 +422,6 @@ void StartDefaultTask(void const * argument)
 		USART1->DR = 'T';
 		while(!(USART1->SR&USART_SR_TXE))
 			;
-		
 //		USART1->DR = '+';
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
@@ -444,10 +446,7 @@ void StartDefaultTask(void const * argument)
 //			;
 		osDelay(200);
 		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
-		
-		
-		
-    osDelay(5000);
+
   }
 	
 	
