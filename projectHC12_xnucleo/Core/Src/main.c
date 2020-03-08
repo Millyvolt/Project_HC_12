@@ -64,6 +64,16 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
+
+
+
+void		delay_us(uint16_t us);
+void		delay_ms(uint16_t ms);
+
+
+
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,6 +121,16 @@ int main(void)
 	USART1->CR1 |= USART_CR1_RXNEIE;
 	HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
 	
+	
+	
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+	
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	delay_ms(1000);
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+
+
+
 
 
   /* USER CODE END 2 */
@@ -172,7 +192,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL8;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -183,10 +203,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -386,6 +406,49 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+
+
+void		delay_us(uint16_t us)
+{
+//	SystemCoreClockUpdate();
+//	TIM3->PSC = SystemCoreClock/1000000 - 1;
+//	TIM3->ARR = us;
+//	TIM3->CR1 |= TIM_CR1_CEN;
+//	while((!TIM3->SR&TIM_SR_UIF))
+//		;
+//	TIM3->SR &= ~TIM_SR_UIF;
+}
+
+void		delay_ms(uint16_t ms)
+{
+//	TIM3->SR &= ~TIM_SR_UIF;
+	SystemCoreClockUpdate();
+	TIM3->PSC = SystemCoreClock/1000 - 1;
+	TIM3->ARR = ms;
+//	TIM3->CCR1 = ms-10;
+//	TIM3->CCER |= TIM_CCER_CC1E;
+	TIM3->CR1 |= TIM_CR1_CEN;
+	TIM3->SR &= ~TIM_SR_UIF;
+	while(!(TIM3->SR&TIM_SR_UIF))
+		;
+	TIM3->SR &= ~TIM_SR_UIF;
+	while(!(TIM3->SR&TIM_SR_UIF))
+		;
+	TIM3->SR &= ~TIM_SR_UIF;
+	while(!(TIM3->SR&TIM_SR_UIF))
+		;
+	TIM3->SR &= ~TIM_SR_UIF;
+	while(!(TIM3->SR&TIM_SR_UIF))
+		;
+	TIM3->SR &= ~TIM_SR_UIF;
+	while(!(TIM3->SR&TIM_SR_UIF))
+		;
+//	TIM3->SR &= ~TIM_SR_UIF;
+}
+
+
 
 /* USER CODE END 4 */
 
