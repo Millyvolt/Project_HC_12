@@ -57,6 +57,16 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
+
+
+
+
+	void	delay_ms(uint16_t ms);
+
+
+
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,6 +105,32 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
+
+
+
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	//RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+	
+//	while (1)
+//  {
+		
+		//HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
+		
+		//HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		
+		
+		
+	//}
+
+
+
 
   /* USER CODE END 2 */
 
@@ -245,6 +281,78 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
+
+
+	void	delay_ms(uint16_t ms)
+	{
+		SystemCoreClockUpdate();
+		
+		TIM2->PSC = SystemCoreClock/1000 - 1;
+		TIM2->ARR = ms;
+		TIM2->CR1 |= TIM_CR1_CEN;
+		TIM2->SR &= ~TIM_SR_UIF;
+		TIM2->SR &= ~TIM_SR_CC1IF;
+		while(!(TIM2->SR&TIM_SR_UIF))
+			;
+		TIM2->SR &= ~TIM_SR_UIF;
+		
+//		TIM3->PSC = SystemCoreClock/1000 - 1;
+//		TIM3->ARR = ms;
+//		TIM3->CCR1 = ms/2;
+//		TIM3->CCER |= TIM_CCER_CC1E;
+//		TIM3->CR1 |= TIM_CR1_CEN;
+//		TIM3->SR &= ~TIM_SR_UIF;
+//		TIM3->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM3->SR&TIM_SR_UIF))
+//			;
+//		TIM3->SR &= ~TIM_SR_UIF;
+//		TIM3->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM3->SR&TIM_SR_UIF))
+//			;
+//		TIM3->SR &= ~TIM_SR_UIF;
+//		TIM3->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM3->SR&TIM_SR_UIF))
+//			;
+		
+//		TIM2->PSC = SystemCoreClock/1000 - 1;
+//		TIM2->ARR = ms;
+//		TIM2->CCR1 = ms/2;
+//		TIM2->CCER |= TIM_CCER_CC1E;
+//		TIM2->CR1 |= TIM_CR1_CEN;
+//		TIM2->SR &= ~TIM_SR_UIF;
+//		TIM2->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM2->SR&TIM_SR_UIF))
+//			;
+//		TIM2->SR &= ~TIM_SR_UIF;
+//		TIM2->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM2->SR&TIM_SR_UIF))
+//			;
+//		TIM2->SR &= ~TIM_SR_UIF;
+//		TIM2->SR &= ~TIM_SR_CC1IF;
+//		while(!(TIM2->SR&TIM_SR_UIF))
+//			;
+
+//		TIM1->PSC = SystemCoreClock/1000 - 1;
+//		TIM1->ARR = ms;
+//		TIM1->CR1 |= TIM_CR1_CEN;
+//		TIM1->SR &= ~TIM_SR_UIF;
+//		while(!(TIM1->SR&TIM_SR_UIF))
+//			;
+//		TIM1->SR &= ~TIM_SR_UIF;
+//		while(!(TIM1->SR&TIM_SR_UIF))
+//			;
+//		TIM1->SR &= ~TIM_SR_UIF;
+//		while(!(TIM1->SR&TIM_SR_UIF))
+//			;
+
+
+	}
+
+
+
+
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -260,49 +368,54 @@ void StartDefaultTask(void const * argument)
 
 	
 	
-	uint8_t	counter=0;
+	//uint8_t	counter=0;
 	
 	
   for(;;)
   {
 		
 
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'S';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'E';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'N';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'D';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		
-		USART1->DR = counter/100+48;
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = counter%100/10+48;
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = counter%100%10+48;
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		
-		USART1->DR = '\n';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = '\r';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		
-		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
-		counter += 1;
-    osDelay(2000);
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'S';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'E';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'N';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'D';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		
+//		USART1->DR = counter/100+48;
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = counter%100/10+48;
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = counter%100%10+48;
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		
+//		USART1->DR = '\n';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = '\r';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		
+//		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
+//		counter += 1;
+//    osDelay(2000);
   }
+	
+	
+	
+	
+	
   /* USER CODE END 5 */ 
 }
 

@@ -152,7 +152,7 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>428</LineNumber>
+          <LineNumber>429</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>134223676</Address>
           <ByteObject>0</ByteObject>
@@ -163,7 +163,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\proj_nucleo\../Core/Src/main.c\428</Expression>
+          <Expression>\\proj_nucleo\../Core/Src/main.c\429</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

@@ -124,6 +124,7 @@ int main(void)
 	
 	
 	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+	TIM3->CR1 |= TIM_CR1_URS;
 	
 	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
 	delay_ms(1000);
