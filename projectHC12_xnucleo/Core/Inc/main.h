@@ -83,6 +83,21 @@ void Error_Handler(void);
 #define HC12_SET_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+
+
+
+#define	RS_I2C	0x01
+#define	RW_I2C	0x02
+#define	E_I2C		0x04
+#define	LED_I2C	0x08
+#define	D4_I2C	0x10
+#define	D5_I2C	0x20
+#define	D6_I2C	0x40
+#define	D7_I2C	0x80
+
+
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

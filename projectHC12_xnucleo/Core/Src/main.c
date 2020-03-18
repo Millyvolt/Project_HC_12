@@ -44,12 +44,22 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
+
+
+
+
+uint8_t 	buf = 0;
+uint16_t	address = 0x4E;
+
+
 
 /* USER CODE END PV */
 
@@ -60,6 +70,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_TIM2_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -67,10 +78,12 @@ void StartDefaultTask(void const * argument);
 
 
 
-void		delay_us(uint16_t us);
+//void		delay_us(uint16_t us);
+void		delay_ms_init(void);
 void		delay_ms(uint16_t ms);
 
-
+void	display_2004_i2c_init(void);
+void	E_pulse(void);
 
 
 
@@ -114,6 +127,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   MX_USART3_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -123,15 +137,17 @@ int main(void)
 	
 	
 	
-	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-
-
-	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	delay_ms_init();
+	
 	delay_ms(1000);
-	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 
-
-
+	
+	display_2004_i2c_init();
+	
+	
+	delay_ms(1000);
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	
 
 
   /* USER CODE END 2 */
@@ -244,6 +260,55 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 0;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OnePulse_Init(&htim2, TIM_OPMODE_SINGLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 
@@ -411,8 +476,8 @@ static void MX_GPIO_Init(void)
 
 
 
-void		delay_us(uint16_t us)
-{
+//void		delay_us(uint16_t us)
+//{
 //	SystemCoreClockUpdate();
 //	TIM3->PSC = SystemCoreClock/1000000 - 1;
 //	TIM3->ARR = us;
@@ -420,33 +485,91 @@ void		delay_us(uint16_t us)
 //	while((!TIM3->SR&TIM_SR_UIF))
 //		;
 //	TIM3->SR &= ~TIM_SR_UIF;
+//}
+
+void		delay_ms_init(void)
+{
+//	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+//	TIM2->CR1 |= TIM_CR1_OPM;
+	SystemCoreClockUpdate();
+	TIM2->PSC = SystemCoreClock/1000 - 1;
+	TIM2->EGR |= TIM_EGR_UG;
+	TIM2->SR &= ~TIM_SR_UIF;
 }
 
 void		delay_ms(uint16_t ms)
 {
-//	TIM3->SR &= ~TIM_SR_UIF;
-	SystemCoreClockUpdate();
-	TIM3->PSC = SystemCoreClock/1000 - 1;
-	TIM3->ARR = ms;
-//	TIM3->CCR1 = ms-10;
-//	TIM3->CCER |= TIM_CCER_CC1E;
-	TIM3->CR1 |= TIM_CR1_CEN;
-	TIM3->SR &= ~TIM_SR_UIF;
-	while(!(TIM3->SR&TIM_SR_UIF))
+	TIM2->ARR = ms;
+	TIM2->CR1 |= TIM_CR1_CEN;
+	while(!(TIM2->SR&TIM_SR_UIF))
 		;
-	TIM3->SR &= ~TIM_SR_UIF;
-	while(!(TIM3->SR&TIM_SR_UIF))
-		;
-	TIM3->SR &= ~TIM_SR_UIF;
-	while(!(TIM3->SR&TIM_SR_UIF))
-		;
-	TIM3->SR &= ~TIM_SR_UIF;
-	while(!(TIM3->SR&TIM_SR_UIF))
-		;
-	TIM3->SR &= ~TIM_SR_UIF;
-	while(!(TIM3->SR&TIM_SR_UIF))
-		;
-//	TIM3->SR &= ~TIM_SR_UIF;
+	TIM2->SR &= ~TIM_SR_UIF;
+}
+
+void	display_2004_i2c_init(void)
+{
+	delay_ms(100);
+	buf = D5_I2C|D4_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	delay_ms(10);
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	delay_ms(1);
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+	buf = D5_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	buf = D7_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+	buf = 0;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	buf = D7_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+	buf = 0;																										//clear display
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	buf = D4_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	delay_ms(5);
+	
+	buf = 0;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	buf = D6_I2C|D5_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+	buf = 0;																										//display on
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	buf = D7_I2C|D6_I2C|D5_I2C|D4_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	E_pulse();
+	
+//	buf = LED_I2C;;																						//led on
+//	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+}
+
+void	E_pulse(void)
+{
+	buf |= E_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	//pause?
+	delay_ms(1);
+	buf &= ~E_I2C;
+	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
 }
 
 
