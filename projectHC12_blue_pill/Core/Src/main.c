@@ -42,6 +42,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
@@ -52,6 +54,7 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
 
@@ -63,6 +66,7 @@ void StartDefaultTask(void const * argument);
 void	delay_ms_init(void);
 void	delay_ms(uint16_t ms);
 
+void	signal(uint8_t freq);
 
 
 
@@ -104,13 +108,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
 
 
 	
+	
 	delay_ms_init();
+	
+	
+	//SystemCoreClockUpdate();
+//	TIM3->DIER |= TIM_DIER_UIE; 
+//	TIM3->PSC = SystemCoreClock/1000 - 1;
+//	signal(1);
+	
+	
 	
 
 /*
@@ -125,12 +139,23 @@ int main(void)
 
 
 
-
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+		delay_ms(1000);
+		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
 		
 
 
@@ -215,6 +240,55 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 0;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OnePulse_Init(&htim2, TIM_OPMODE_SINGLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -288,11 +362,11 @@ static void MX_GPIO_Init(void)
 
 void	delay_ms_init(void)
 {
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+//	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+//	TIM2->CR1 |= TIM_CR1_OPM;
 	SystemCoreClockUpdate();
 	TIM2->PSC = SystemCoreClock/1000 - 1;
 	TIM2->EGR |= TIM_EGR_UG;
-	TIM2->CR1 |= TIM_CR1_OPM;
 	TIM2->SR &= ~TIM_SR_UIF;
 }
 
@@ -303,6 +377,12 @@ void	delay_ms(uint16_t ms)
 	while(!(TIM2->SR&TIM_SR_UIF))
 		;
 	TIM2->SR &= ~TIM_SR_UIF;
+}
+
+void	signal(uint8_t freq)
+{
+	TIM3->ARR = 1000/freq/2;
+	TIM3->CR1 |= TIM_CR1_CEN;
 }
 
 

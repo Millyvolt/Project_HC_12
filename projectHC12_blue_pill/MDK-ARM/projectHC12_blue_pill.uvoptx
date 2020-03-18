@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>140</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134222188</Address>
+          <LineNumber>144</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134222724</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,14 +163,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\projectHC12_blue_pill\../Core/Src/main.c\140</Expression>
+          <Expression>\\projectHC12_blue_pill\../Core/Src/main.c\144</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>138</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134222168</Address>
+          <LineNumber>146</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134222740</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,7 +179,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\projectHC12_blue_pill\../Core/Src/main.c\138</Expression>
+          <Expression>\\projectHC12_blue_pill\../Core/Src/main.c\146</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>148</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134222756</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>../Core/Src/main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\projectHC12_blue_pill\../Core/Src/main.c\148</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
