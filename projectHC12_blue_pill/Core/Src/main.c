@@ -60,8 +60,8 @@ void StartDefaultTask(void const * argument);
 
 
 
-
-	void	delay_ms(uint16_t ms);
+void	delay_ms_init(void);
+void	delay_ms(uint16_t ms);
 
 
 
@@ -92,6 +92,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+	
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -108,10 +109,24 @@ int main(void)
 
 
 
-
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-	//RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 	
+	delay_ms_init();
+	
+
+/*
+*
+*
+*
+*		Timer 2 проинициализирован не из куба
+*
+*
+*
+*/
+
+
+
+
+
 //	while (1)
 //  {
 		
@@ -283,71 +298,24 @@ static void MX_GPIO_Init(void)
 
 
 
+void	delay_ms_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	SystemCoreClockUpdate();
+	TIM2->PSC = SystemCoreClock/1000 - 1;
+	TIM2->EGR |= TIM_EGR_UG;
+	TIM2->CR1 |= TIM_CR1_OPM;
+	TIM2->SR &= ~TIM_SR_UIF;
+}
 
-	void	delay_ms(uint16_t ms)
-	{
-		SystemCoreClockUpdate();
-		
-		TIM2->PSC = SystemCoreClock/1000 - 1;
-		TIM2->ARR = ms;
-		TIM2->CR1 |= TIM_CR1_CEN;
-		TIM2->SR &= ~TIM_SR_UIF;
-		TIM2->SR &= ~TIM_SR_CC1IF;
-		while(!(TIM2->SR&TIM_SR_UIF))
-			;
-		TIM2->SR &= ~TIM_SR_UIF;
-		
-//		TIM3->PSC = SystemCoreClock/1000 - 1;
-//		TIM3->ARR = ms;
-//		TIM3->CCR1 = ms/2;
-//		TIM3->CCER |= TIM_CCER_CC1E;
-//		TIM3->CR1 |= TIM_CR1_CEN;
-//		TIM3->SR &= ~TIM_SR_UIF;
-//		TIM3->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM3->SR&TIM_SR_UIF))
-//			;
-//		TIM3->SR &= ~TIM_SR_UIF;
-//		TIM3->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM3->SR&TIM_SR_UIF))
-//			;
-//		TIM3->SR &= ~TIM_SR_UIF;
-//		TIM3->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM3->SR&TIM_SR_UIF))
-//			;
-		
-//		TIM2->PSC = SystemCoreClock/1000 - 1;
-//		TIM2->ARR = ms;
-//		TIM2->CCR1 = ms/2;
-//		TIM2->CCER |= TIM_CCER_CC1E;
-//		TIM2->CR1 |= TIM_CR1_CEN;
-//		TIM2->SR &= ~TIM_SR_UIF;
-//		TIM2->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM2->SR&TIM_SR_UIF))
-//			;
-//		TIM2->SR &= ~TIM_SR_UIF;
-//		TIM2->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM2->SR&TIM_SR_UIF))
-//			;
-//		TIM2->SR &= ~TIM_SR_UIF;
-//		TIM2->SR &= ~TIM_SR_CC1IF;
-//		while(!(TIM2->SR&TIM_SR_UIF))
-//			;
-
-//		TIM1->PSC = SystemCoreClock/1000 - 1;
-//		TIM1->ARR = ms;
-//		TIM1->CR1 |= TIM_CR1_CEN;
-//		TIM1->SR &= ~TIM_SR_UIF;
-//		while(!(TIM1->SR&TIM_SR_UIF))
-//			;
-//		TIM1->SR &= ~TIM_SR_UIF;
-//		while(!(TIM1->SR&TIM_SR_UIF))
-//			;
-//		TIM1->SR &= ~TIM_SR_UIF;
-//		while(!(TIM1->SR&TIM_SR_UIF))
-//			;
-
-
-	}
+void	delay_ms(uint16_t ms)
+{
+	TIM2->ARR = ms;
+	TIM2->CR1 |= TIM_CR1_CEN;
+	while(!(TIM2->SR&TIM_SR_UIF))
+		;
+	TIM2->SR &= ~TIM_SR_UIF;
+}
 
 
 
