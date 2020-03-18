@@ -126,24 +126,12 @@ int main(void)
 
 
 
-
-//	while (1)
-//  {
-		
-		//HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
-		
-		//HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
 //		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
 		
-		
-		
-	//}
-
 
 
 
