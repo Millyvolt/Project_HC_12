@@ -63,9 +63,6 @@ void StartDefaultTask(void const * argument);
 
 
 
-void	delay_ms_init(void);
-void	delay_ms(uint16_t ms);
-
 void	signal(uint8_t freq);
 
 
@@ -117,8 +114,11 @@ int main(void)
 	
 	
 	delay_ms_init();
+	HD44780_init();
 	
 	
+	
+		//signal init
 	//SystemCoreClockUpdate();
 //	TIM3->DIER |= TIM_DIER_UIE; 
 //	TIM3->PSC = SystemCoreClock/1000 - 1;
@@ -131,7 +131,7 @@ int main(void)
 *
 *
 *
-*		Timer 2 проинициализирован не из куба
+*					Todo's
 *
 *
 *
@@ -139,23 +139,23 @@ int main(void)
 
 
 
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-		delay_ms(1000);
-		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
+//		delay_ms(1000);
+//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
 		
 
 
@@ -332,10 +332,15 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, RS_Pin|RW_Pin|E_Pin|DB4_Pin 
+                          |DB5_Pin|DB6_Pin|DB7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
@@ -346,6 +351,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_green_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : RS_Pin RW_Pin E_Pin DB4_Pin 
+                           DB5_Pin DB6_Pin DB7_Pin */
+  GPIO_InitStruct.Pin = RS_Pin|RW_Pin|E_Pin|DB4_Pin 
+                          |DB5_Pin|DB6_Pin|DB7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : HC12_SET_Pin */
   GPIO_InitStruct.Pin = HC12_SET_Pin;
@@ -359,25 +373,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 
-
-void	delay_ms_init(void)
-{
-//	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-//	TIM2->CR1 |= TIM_CR1_OPM;
-	SystemCoreClockUpdate();
-	TIM2->PSC = SystemCoreClock/1000 - 1;
-	TIM2->EGR |= TIM_EGR_UG;
-	TIM2->SR &= ~TIM_SR_UIF;
-}
-
-void	delay_ms(uint16_t ms)
-{
-	TIM2->ARR = ms;
-	TIM2->CR1 |= TIM_CR1_CEN;
-	while(!(TIM2->SR&TIM_SR_UIF))
-		;
-	TIM2->SR &= ~TIM_SR_UIF;
-}
 
 void	signal(uint8_t freq)
 {
@@ -410,7 +405,9 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 		
-
+		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
+		osDelay(1000);
+		
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
 //		USART1->DR = 'S';

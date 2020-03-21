@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 "projecthc12_blue_pill\startup_stm32f103xb.o"
+"projecthc12_blue_pill\weh1602.o"
 "projecthc12_blue_pill\main.o"
 "projecthc12_blue_pill\freertos.o"
 "projecthc12_blue_pill\stm32f1xx_it.o"

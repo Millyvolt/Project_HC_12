@@ -27,6 +27,8 @@ projecthc12_blue_pill\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f
 projecthc12_blue_pill\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 projecthc12_blue_pill\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 projecthc12_blue_pill\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+projecthc12_blue_pill\stm32f1xx_it.o: ../Core/Inc/weh1602.h
+projecthc12_blue_pill\stm32f1xx_it.o: ../Core/Inc/main.h
 projecthc12_blue_pill\stm32f1xx_it.o: ../Core/Inc/stm32f1xx_it.h
 projecthc12_blue_pill\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 projecthc12_blue_pill\stm32f1xx_it.o: ../Core/Inc/FreeRTOSConfig.h
