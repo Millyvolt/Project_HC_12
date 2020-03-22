@@ -63,6 +63,13 @@ extern TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN EV */
 
+
+
+uint8_t gor_left_error=0, gor_right_error=0;
+
+
+
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -186,9 +193,34 @@ void USART1_IRQHandler(void)
 	
 	volatile	uint8_t	data_Rx;
 	
+	
 	data_Rx = USART1->DR;
 	
+	while(!(USART2->SR&USART_SR_TXE))
+			;
 	USART2->DR = data_Rx;
+	
+	switch(data_Rx)
+	{
+		case 'L':
+			gor_left_error = GOR_ERROR;
+			break;
+		case 'R':
+			gor_right_error = GOR_ERROR;
+			break;
+		case '1':
+			gor_left_error = 0;
+			break;
+		case '2':
+			gor_right_error = 0;
+			break;
+		default:
+			break;
+	}
+	
+//	while(!(USART1->SR&USART_SR_TXE))
+//			;
+//	USART1->DR = data_Rx;
 	
 	
 	

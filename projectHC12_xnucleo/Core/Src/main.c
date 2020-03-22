@@ -133,8 +133,6 @@ int main(void)
 
 
 	USART1->CR1 |= USART_CR1_RXNEIE;
-	HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
-	
 	
 	
 	delay_ms_init();
@@ -142,11 +140,11 @@ int main(void)
 	delay_ms(1000);
 
 	
-	display_2004_i2c_init();
+	//display_2004_i2c_init();
 	
 	
 	delay_ms(1000);
-	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
 	
 
 
@@ -595,20 +593,24 @@ void StartDefaultTask(void const * argument)
 
 		for(uint16_t i=0; i<5; i++)
 		{
-			HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
 			osDelay(1000);
 		}
 		
-		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
-		osDelay(200);
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'A';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
-		USART1->DR = 'T';
-		while(!(USART1->SR&USART_SR_TXE))
-			;
+		
+		
+		
+		
+//		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
+//		osDelay(200);
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'A';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
+//		USART1->DR = 'T';
+//		while(!(USART1->SR&USART_SR_TXE))
+//			;
 //		USART1->DR = '+';
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
@@ -631,8 +633,8 @@ void StartDefaultTask(void const * argument)
 //		USART1->DR = 'V';
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
-		osDelay(200);
-		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
+//		osDelay(200);
+//		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
 
   }
 	

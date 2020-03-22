@@ -67,6 +67,10 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_green_Pin GPIO_PIN_13
 #define LED_green_GPIO_Port GPIOC
+#define Gor_left_Pin GPIO_PIN_10
+#define Gor_left_GPIO_Port GPIOB
+#define Gor_right_Pin GPIO_PIN_11
+#define Gor_right_GPIO_Port GPIOB
 #define RS_Pin GPIO_PIN_12
 #define RS_GPIO_Port GPIOB
 #define RW_Pin GPIO_PIN_13
@@ -84,6 +88,14 @@ void Error_Handler(void);
 #define DB7_Pin GPIO_PIN_7
 #define DB7_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+
+
+
+
+//#define	USING_LCD
+
+
+
 
 /* USER CODE END Private defines */
 

@@ -114,9 +114,29 @@ int main(void)
 	
 	
 	delay_ms_init();
+	
+	#ifdef	USING_LCD
 	HD44780_init();
 	
+	USART1->CR1 |= USART_CR1_RXNEIE;
+	#endif	//USING_LCD
+		
+		//doesn't working
+//	WEH1602_RS(RESET_LCD);
+//	WEH1602_DB7(RESET_LCD);		//cursor and display shift
+//	WEH1602_DB6(RESET_LCD);
+//	WEH1602_DB5(RESET_LCD);
+//	WEH1602_DB4(SET_LCD);
+//	WEH1602_E_strobe();
+//	WEH1602_DB7(SET_LCD);
+//	WEH1602_DB6(SET_LCD);
+//	WEH1602_DB5(RESET_LCD);
+//	WEH1602_DB4(RESET_LCD);
+//	WEH1602_E_strobe();
+//	//WEH1602_RS(SET_LCD);
+//	delay_ms(10);
 	
+		
 	
 		//signal init
 	//SystemCoreClockUpdate();
@@ -137,26 +157,6 @@ int main(void)
 *
 */
 
-
-
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET); 
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_SET);
-//		delay_ms(1000);
-//		HAL_GPIO_WritePin(LED_green_GPIO_Port, LED_green_Pin, GPIO_PIN_RESET);
-		
 
 
 
@@ -352,6 +352,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_green_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : Gor_left_Pin Gor_right_Pin */
+  GPIO_InitStruct.Pin = Gor_left_Pin|Gor_right_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /*Configure GPIO pins : RS_Pin RW_Pin E_Pin DB4_Pin 
                            DB5_Pin DB6_Pin DB7_Pin */
   GPIO_InitStruct.Pin = RS_Pin|RW_Pin|E_Pin|DB4_Pin 
@@ -404,25 +410,48 @@ void StartDefaultTask(void const * argument)
 	
   for(;;)
   {
-		
 		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
 		osDelay(1000);
 		
+		
+		if( HAL_GPIO_ReadPin(Gor_left_GPIO_Port, Gor_left_Pin) )
+		{
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+			USART1->DR = 'L';
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+		}
+		else
+		{
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+			USART1->DR = '1';
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+		}
+		
+		if( HAL_GPIO_ReadPin(Gor_right_GPIO_Port, Gor_right_Pin) )
+		{
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+			USART1->DR = 'R';
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+		}
+		else
+		{
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+			USART1->DR = '2';
+			while(!(USART1->SR&USART_SR_TXE))
+				;
+		}
+		
+		
+		
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
-//		USART1->DR = 'S';
-//		while(!(USART1->SR&USART_SR_TXE))
-//			;
-//		USART1->DR = 'E';
-//		while(!(USART1->SR&USART_SR_TXE))
-//			;
-//		USART1->DR = 'N';
-//		while(!(USART1->SR&USART_SR_TXE))
-//			;
-//		USART1->DR = 'D';
-//		while(!(USART1->SR&USART_SR_TXE))
-//			;
-//		
 //		USART1->DR = counter/100+48;
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
@@ -432,17 +461,14 @@ void StartDefaultTask(void const * argument)
 //		USART1->DR = counter%100%10+48;
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
-//		
 //		USART1->DR = '\n';
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
 //		USART1->DR = '\r';
 //		while(!(USART1->SR&USART_SR_TXE))
 //			;
-//		
-//		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
 //		counter += 1;
-//    osDelay(2000);
+
   }
 	
 	

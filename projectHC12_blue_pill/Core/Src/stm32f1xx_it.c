@@ -45,6 +45,15 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
+
+
+
+uint8_t		counter_lcd=0;
+
+
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +67,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN EV */
@@ -172,6 +182,52 @@ void TIM4_IRQHandler(void)
   /* USER CODE BEGIN TIM4_IRQn 1 */
 
   /* USER CODE END TIM4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+	
+	
+	
+	uint8_t data_rx=0;
+	
+	data_rx = USART1->DR;
+	
+	WEH1602_wr_data(data_rx);
+	
+	counter_lcd += 1;
+	
+	if(counter_lcd==15)
+	{
+		WEH1602_RS(RESET_LCD);
+		WEH1602_DB7(RESET_LCD);		//return home
+		WEH1602_DB6(RESET_LCD);
+		WEH1602_DB5(RESET_LCD);
+		WEH1602_DB4(RESET_LCD);
+		WEH1602_E_strobe();
+		WEH1602_DB7(RESET_LCD);
+		WEH1602_DB6(RESET_LCD);
+		WEH1602_DB5(SET_LCD);
+		WEH1602_DB4(RESET_LCD);
+		WEH1602_E_strobe();
+		delay_ms(10);
+		//WEH1602_RS(SET_LCD);
+		counter_lcd = 0;
+	}
+	
+	
+	
+	
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
