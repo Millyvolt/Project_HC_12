@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F103xB,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;                  ../Drivers/STM32F1xx_HAL_Driver/Inc;                  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;                  ../Drivers/CMSIS/Include;              ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;          ../Middlewares/Third_Party/FreeRTOS/Source/include;          ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;          ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3</IncludePath>
+              <IncludePath>../Core/Inc;                    ../Drivers/STM32F1xx_HAL_Driver/Inc;                    ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;                    ../Drivers/CMSIS/Include;                ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;            ../Middlewares/Third_Party/FreeRTOS/Source/include;            ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;            ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

@@ -413,7 +413,6 @@ void StartDefaultTask(void const * argument)
 		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
 		osDelay(1000);
 		
-		
 		if( HAL_GPIO_ReadPin(Gor_left_GPIO_Port, Gor_left_Pin) )
 		{
 			while(!(USART1->SR&USART_SR_TXE))
@@ -430,6 +429,9 @@ void StartDefaultTask(void const * argument)
 			while(!(USART1->SR&USART_SR_TXE))
 				;
 		}
+		
+		HAL_GPIO_TogglePin(LED_green_GPIO_Port, LED_green_Pin);
+		osDelay(1000);
 		
 		if( HAL_GPIO_ReadPin(Gor_right_GPIO_Port, Gor_right_Pin) )
 		{

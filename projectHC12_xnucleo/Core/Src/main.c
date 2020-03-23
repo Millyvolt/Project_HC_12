@@ -56,8 +56,12 @@ osThreadId defaultTaskHandle;
 
 
 
-uint8_t 	buf = 0;
-uint16_t	address = 0x4E;
+uint8_t 		buf = 0;
+uint16_t		address = 0x4E;
+
+extern	volatile	uint8_t		gor_left_error, gor_right_error, counter_led4;
+
+osThreadId	errorTaskHandle;
 
 
 
@@ -85,6 +89,7 @@ void		delay_ms(uint16_t ms);
 void	display_2004_i2c_init(void);
 void	E_pulse(void);
 
+void	ErrorIndicateTask(void const * argument);
 
 
 /* USER CODE END PFP */
@@ -172,7 +177,14 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  
+	
+	
+//	osThreadDef(errorTask, ErrorIndicateTask, osPriorityNormal, 0, 128);
+//  errorTaskHandle = osThreadCreate(osThread(errorTask), NULL);
+	
+	
+	
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -428,10 +440,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED4_Pin|LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, LED4_Pin|LED3_Pin|LED2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
@@ -442,12 +454,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LD2_Pin Buzzer_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin|Buzzer_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED4_Pin LED3_Pin LED2_Pin */
   GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin|LED2_Pin;
@@ -485,7 +497,7 @@ static void MX_GPIO_Init(void)
 //	TIM3->SR &= ~TIM_SR_UIF;
 //}
 
-void		delay_ms_init(void)
+void	delay_ms_init(void)
 {
 //	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 //	TIM2->CR1 |= TIM_CR1_OPM;
@@ -495,7 +507,7 @@ void		delay_ms_init(void)
 	TIM2->SR &= ~TIM_SR_UIF;
 }
 
-void		delay_ms(uint16_t ms)
+void	delay_ms(uint16_t ms)
 {
 	TIM2->ARR = ms;
 	TIM2->CR1 |= TIM_CR1_CEN;
@@ -570,6 +582,25 @@ void	E_pulse(void)
 	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
 }
 
+void	ErrorIndicateTask(void const * argument)
+{
+	if(gor_left_error)
+	{
+		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+		osDelay(100);
+	}
+	else
+		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+	
+	if(gor_right_error)
+	{
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		osDelay(100);
+	}
+	else
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+}
+
 
 
 /* USER CODE END 4 */
@@ -586,17 +617,42 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 		
 
-	
 
   for(;;)
   {
 
-		for(uint16_t i=0; i<5; i++)
+//		osDelay(100);
+//		counter_led4 += 1;
+//		if(counter_led4)
+//		{
+//			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+//			counter_led4 = 0;
+//		}
+		
+		
+		if(gor_left_error)
 		{
-			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-			osDelay(1000);
+			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+			HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			osDelay(100);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
 		}
 		
+		if(gor_right_error)
+		{
+			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			osDelay(100);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+		}
 		
 		
 		

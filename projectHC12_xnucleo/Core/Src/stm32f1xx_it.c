@@ -65,7 +65,7 @@ extern TIM_HandleTypeDef htim4;
 
 
 
-uint8_t gor_left_error=0, gor_right_error=0;
+volatile	uint8_t gor_left_error=0, gor_right_error=0, counter_led4=0;
 
 
 
@@ -204,15 +204,23 @@ void USART1_IRQHandler(void)
 	{
 		case 'L':
 			gor_left_error = GOR_ERROR;
+			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+			//counter_led4 += 1;
 			break;
 		case 'R':
 			gor_right_error = GOR_ERROR;
+			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+			//counter_led4 += 1;
 			break;
 		case '1':
 			gor_left_error = 0;
+			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+			//counter_led4 += 1;
 			break;
 		case '2':
 			gor_right_error = 0;
+			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+			//counter_led4 += 1;
 			break;
 		default:
 			break;
