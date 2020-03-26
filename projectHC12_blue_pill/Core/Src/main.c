@@ -154,6 +154,8 @@ int main(void)
 *					Todo's
 *
 *
+*			Turn off USART interrupt (now its turned on)
+*
 *
 */
 

@@ -58,9 +58,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define B1_Pin GPIO_PIN_13
-#define B1_GPIO_Port GPIOC
-#define B1_EXTI_IRQn EXTI15_10_IRQn
+#define USER_button_Pin GPIO_PIN_13
+#define USER_button_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
@@ -88,16 +87,26 @@ void Error_Handler(void);
 
 
 
-#define	RS_I2C		0x01
-#define	RW_I2C		0x02
-#define	E_I2C			0x04
-#define	LED_I2C		0x08
-#define	D4_I2C		0x10
-#define	D5_I2C		0x20
-#define	D6_I2C		0x40
-#define	D7_I2C		0x80
+#define	RS_I2C				0x01
+#define	RW_I2C				0x02
+#define	E_I2C					0x04
+#define	LED_I2C				0x08
+#define	D4_I2C				0x10
+#define	D5_I2C				0x20
+#define	D6_I2C				0x40
+#define	D7_I2C				0x80
 
-#define	GOR_ERROR	0x01
+#define	GOR_ERROR			0x01
+
+#define	TIME_10_MIN		60000
+#define	TIME_20_MIN		120000
+#define	TIME_30_MIN		180000
+
+enum Buzzer_state
+{
+	BUZZER_ON,
+	BUZZER_OFF
+};
 
 
 

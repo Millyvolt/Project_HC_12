@@ -56,12 +56,15 @@ osThreadId defaultTaskHandle;
 
 
 
-uint8_t 		buf = 0;
-uint16_t		address = 0x4E;
+uint8_t 		buf=0, but_press_counter=0;
+uint16_t		address=0x4E;
+uint32_t		time=0;
+enum				Buzzer_state	buzzer_state=BUZZER_ON;
 
 extern	volatile	uint8_t		gor_left_error, gor_right_error, counter_led4;
 
 osThreadId	errorTaskHandle;
+osThreadId	userButtonTaskHandle;
 
 
 
@@ -90,6 +93,7 @@ void	display_2004_i2c_init(void);
 void	E_pulse(void);
 
 void	ErrorIndicateTask(void const * argument);
+void	UserButtonTask(void const * argument);
 
 
 /* USER CODE END PFP */
@@ -182,6 +186,9 @@ int main(void)
 	
 //	osThreadDef(errorTask, ErrorIndicateTask, osPriorityNormal, 0, 128);
 //  errorTaskHandle = osThreadCreate(osThread(errorTask), NULL);
+
+		osThreadDef(buttonTask, UserButtonTask, osPriorityNormal, 0, 128);
+		userButtonTaskHandle = osThreadCreate(osThread(buttonTask), NULL);
 	
 	
 	
@@ -448,11 +455,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : B1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : USER_button_Pin */
+  GPIO_InitStruct.Pin = USER_button_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(USER_button_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LD2_Pin Buzzer_Pin */
   GPIO_InitStruct.Pin = LD2_Pin|Buzzer_Pin;
@@ -474,10 +481,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(HC12_SET_GPIO_Port, &GPIO_InitStruct);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
@@ -584,23 +587,73 @@ void	E_pulse(void)
 
 void	ErrorIndicateTask(void const * argument)
 {
-	if(gor_left_error)
-	{
-		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+		for(;;)
+		{
+		if(gor_left_error)
+		{
+			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+			osDelay(100);
+		}
+		else
+			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+		
+		if(gor_right_error)
+		{
+			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			osDelay(100);
+		}
+		else
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+		
 		osDelay(100);
-	}
-	else
-		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-	
-	if(gor_right_error)
-	{
-		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-		osDelay(100);
-	}
-	else
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+		}
 }
 
+void	UserButtonTask(void const * argument)
+{
+	for(;;)
+	{
+			if(gor_left_error||gor_right_error)
+			{
+					if(buzzer_state==BUZZER_ON)
+					{
+						if( HAL_GPIO_ReadPin(USER_button_GPIO_Port, USER_button_Pin) )		
+						{																			//not pressed
+							but_press_counter = 0;		//for debounce
+						}
+						else						
+						{																			//pressed
+							but_press_counter += 1;
+							if(but_press_counter==7)
+							{
+								buzzer_state = BUZZER_OFF;
+								HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+								but_press_counter = 0;
+								time = TIME_30_MIN;
+							}
+						}
+					}
+					
+					if(buzzer_state==BUZZER_OFF)
+					{
+						time -= 1;
+						if(!time)
+							buzzer_state = BUZZER_ON;
+					}
+					
+					osDelay(10);
+			}
+			else
+			{
+//					if(time)
+//						time = 0;
+//					if(buzzer_state==BUZZER_OFF)
+//						buzzer_state = BUZZER_ON;
+				
+					osDelay(50);
+			}
+	}
+}
 
 
 /* USER CODE END 4 */
@@ -621,19 +674,19 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 
-//		osDelay(100);
-//		counter_led4 += 1;
-//		if(counter_led4)
-//		{
-//			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-//			counter_led4 = 0;
-//		}
 		
+//		if( HAL_GPIO_ReadPin(USER_button_GPIO_Port, USER_button_Pin) )
+//			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+//		else
+//			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+		
+		osDelay(100);
 		
 		if(gor_left_error)
 		{
 			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
-			HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			if(buzzer_state==BUZZER_ON)
+				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
 			osDelay(100);
 		}
 		else
@@ -645,7 +698,8 @@ void StartDefaultTask(void const * argument)
 		if(gor_right_error)
 		{
 			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			if(buzzer_state==BUZZER_ON)
+				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
 			osDelay(100);
 		}
 		else
