@@ -27,6 +27,8 @@ blue_pill_c13_lcd_test\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal
 blue_pill_c13_lcd_test\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 blue_pill_c13_lcd_test\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 blue_pill_c13_lcd_test\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
+blue_pill_c13_lcd_test\main.o: ../Core/Inc/lcd_led.h
+blue_pill_c13_lcd_test\main.o: ../Core/Inc/main.h
 blue_pill_c13_lcd_test\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 blue_pill_c13_lcd_test\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 blue_pill_c13_lcd_test\main.o: ../Core/Inc/FreeRTOSConfig.h

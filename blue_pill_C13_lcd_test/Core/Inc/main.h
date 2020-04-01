@@ -33,6 +33,14 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+
+
+
+#include	"lcd_led.h"
+
+
+
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -61,6 +69,23 @@ void Error_Handler(void);
 #define LED_green_Pin GPIO_PIN_13
 #define LED_green_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
+
+
+
+
+#define	RS_I2C				0x01
+#define	RW_I2C				0x02
+#define	E_I2C				0x04
+#define	LED_I2C				0x08
+#define	D4_I2C				0x10
+#define	D5_I2C				0x20
+#define	D6_I2C				0x40
+#define	D7_I2C				0x80
+
+#define	ADDRESS_2004		0x40
+
+
+
 
 /* USER CODE END Private defines */
 

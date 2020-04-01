@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 "blue_pill_c13_lcd_test\startup_stm32f103xb.o"
+"blue_pill_c13_lcd_test\lcd_led.o"
 "blue_pill_c13_lcd_test\main.o"
 "blue_pill_c13_lcd_test\freertos.o"
 "blue_pill_c13_lcd_test\stm32f1xx_it.o"
