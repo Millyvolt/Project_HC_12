@@ -82,7 +82,7 @@ void Error_Handler(void);
 #define	D6_I2C				0x40
 #define	D7_I2C				0x80
 
-#define	ADDRESS_2004		0x40
+#define	ADDRESS_2004		0x4E
 
 
 

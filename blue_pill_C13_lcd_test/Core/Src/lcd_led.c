@@ -3,6 +3,8 @@
 //#include "main.h"
 
 
+
+uint8_t	buf;
 uint16_t	psc_ms, psc_us;
 
 #ifdef		LCD_I2C_2004
@@ -612,75 +614,77 @@ void	HD44780_init(void)		//for proteus model LM016L
 
 #ifdef	LCD_I2C_2004
 
-void	display_2004_i2c_init(void)
+void	display_2004_i2c_init(I2C_HandleTypeDef *hi2c)
 {
-	uint8_t	buf;
-	
 	delay_ms(200);
 	buf = D5_I2C|D4_I2C;
-	HAL_I2C_IsDeviceReady(&hi2c1, address, 5, 1000);
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_IsDeviceReady(hi2c, address, 5, 1000);
+	
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	delay_ms(10);
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
-	delay_ms(1);
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
 	buf = D5_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	buf = D7_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
 	buf = 0;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	buf = D7_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
 	buf = 0;															//clear display
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	buf = D4_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	delay_ms(5);
 	
 	buf = 0;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	buf = D6_I2C|D5_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
 	buf = 0;															//display on
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
 	buf = D7_I2C|D6_I2C|D5_I2C|D4_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	E_pulse();
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
+	E_pulse(hi2c);
+	delay_ms(2);
 	
-//	buf = LED_I2C;;														//led on
-//	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	buf = LED_I2C;												//led on
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 }
 
-void	E_pulse(void)
+void	E_pulse(I2C_HandleTypeDef *hi2c)
 {
-	uint8_t	buf;
-	
 	buf |= E_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
-	//pause?
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	delay_ms(1);
 	buf &= ~E_I2C;
-	HAL_I2C_Master_Transmit(&hi2c1, address, &buf, 1, 1000);
+	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 }
 
 #endif	//LCD_I2C_2004

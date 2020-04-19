@@ -62,8 +62,8 @@ void 		WEH1602_init2(void);
 void		WEH1602_clear_display(void);
 void		WEH1602_clear_line(uint8_t line);
 void		HD44780_init(void);		//for proteus model LM016L 
-void		display_2004_i2c_init(void);
-void		E_pulse(void);
+void		display_2004_i2c_init(I2C_HandleTypeDef *hi2c);
+void		E_pulse(I2C_HandleTypeDef *hi2c);
 
 //hardware depending
 void 		WEH1602_RS(uint8_t set_reset);
