@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 "proj_nucleo\startup_stm32f103xb.o"
+"proj_nucleo\lcd_led.o"
 "proj_nucleo\main.o"
 "proj_nucleo\freertos.o"
 "proj_nucleo\stm32f1xx_it.o"

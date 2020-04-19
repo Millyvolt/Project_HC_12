@@ -42,3 +42,4 @@ proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 proj_nucleo\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+proj_nucleo\main.o: ../Core/Inc/lcd_led.h
