@@ -689,6 +689,7 @@ void	E_pulse(I2C_HandleTypeDef *hi2c)
 
 void	write_data_i2c(I2C_HandleTypeDef *hi2c, uint8_t data)
 {
+	//data |= LED_I2C;
 	buf = (data&0xF0)|RS_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
@@ -703,6 +704,7 @@ void	write_data_i2c(I2C_HandleTypeDef *hi2c, uint8_t data)
 
 void		write_cmd_i2c(I2C_HandleTypeDef *hi2c, uint8_t command)
 {
+	//command |= LED_I2C;
 	buf = (command&0xF0);
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);

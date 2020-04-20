@@ -58,6 +58,7 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 osThreadId defaultTaskHandle;
+osThreadId KeysHandle;
 /* USER CODE BEGIN PV */
 
 
@@ -86,6 +87,7 @@ static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_TIM3_Init(void);
 void StartDefaultTask(void const * argument);
+void KeysTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -156,35 +158,36 @@ int main(void)
 //	delay_ms(300);
 //	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
 
-	display_2004_i2c_init(&hi2c1);
-	
-	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
-	write_data_i2c(&hi2c1, 's');
-	write_data_i2c(&hi2c1, 'k');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'd');
-	write_data_i2c(&hi2c1, ' ');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'e');
-	write_data_i2c(&hi2c1, 'v');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'y');
-	write_data_i2c(&hi2c1, 'a');
-	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
-	write_data_i2c(&hi2c1, 's');
-	write_data_i2c(&hi2c1, 'k');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'd');
-	write_data_i2c(&hi2c1, ' ');
-	write_data_i2c(&hi2c1, 'p');
-	write_data_i2c(&hi2c1, 'r');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'v');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'y');
-	write_data_i2c(&hi2c1, 'a');
+//	display_2004_i2c_init(&hi2c1);
+//	
+//	
+//	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
+//	write_data_i2c(&hi2c1, 's');
+//	write_data_i2c(&hi2c1, 'k');
+//	write_data_i2c(&hi2c1, 'l');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_data_i2c(&hi2c1, 'd');
+//	write_data_i2c(&hi2c1, ' ');
+//	write_data_i2c(&hi2c1, 'l');
+//	write_data_i2c(&hi2c1, 'e');
+//	write_data_i2c(&hi2c1, 'v');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_data_i2c(&hi2c1, 'y');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
+//	write_data_i2c(&hi2c1, 's');
+//	write_data_i2c(&hi2c1, 'k');
+//	write_data_i2c(&hi2c1, 'l');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_data_i2c(&hi2c1, 'd');
+//	write_data_i2c(&hi2c1, ' ');
+//	write_data_i2c(&hi2c1, 'p');
+//	write_data_i2c(&hi2c1, 'r');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_data_i2c(&hi2c1, 'v');
+//	write_data_i2c(&hi2c1, 'a');
+//	write_data_i2c(&hi2c1, 'y');
+//	write_data_i2c(&hi2c1, 'a');
 	
 	
 
@@ -211,6 +214,10 @@ int main(void)
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of Keys */
+  osThreadDef(Keys, KeysTask, osPriorityIdle, 0, 128);
+  KeysHandle = osThreadCreate(osThread(Keys), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   
 	
@@ -221,6 +228,8 @@ int main(void)
 		osThreadDef(buttonTask, UserButtonTask, osPriorityNormal, 0, 128);
 		userButtonTaskHandle = osThreadCreate(osThread(buttonTask), NULL);
 	
+	
+	vTaskSuspend(KeysHandle);
 	
 	
   /* USER CODE END RTOS_THREADS */
@@ -475,10 +484,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, Keys_common_Pin|LD2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED4_Pin|GPIO_PIN_8|LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, LED4_Pin|LED2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
@@ -486,25 +495,37 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : USER_button_Pin */
-  GPIO_InitStruct.Pin = USER_button_Pin;
+  /*Configure GPIO pins : USER_button_Pin Key1_Pin */
+  GPIO_InitStruct.Pin = USER_button_Pin|Key1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(USER_button_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD2_Pin Buzzer_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin|Buzzer_Pin;
+  /*Configure GPIO pins : Keys_common_Pin LD2_Pin Buzzer_Pin */
+  GPIO_InitStruct.Pin = Keys_common_Pin|LD2_Pin|Buzzer_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED4_Pin PC8 LED2_Pin */
-  GPIO_InitStruct.Pin = LED4_Pin|GPIO_PIN_8|LED2_Pin;
+  /*Configure GPIO pins : Key4_Pin Key3_Pin */
+  GPIO_InitStruct.Pin = Key4_Pin|Key3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED4_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = LED4_Pin|LED2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Key2_Pin */
+  GPIO_InitStruct.Pin = Key2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(Key2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : HC12_SET_Pin */
   GPIO_InitStruct.Pin = HC12_SET_Pin;
@@ -716,6 +737,38 @@ void StartDefaultTask(void const * argument)
 	
 	
   /* USER CODE END 5 */ 
+}
+
+/* USER CODE BEGIN Header_KeysTask */
+/**
+* @brief Function implementing the Keys thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_KeysTask */
+void KeysTask(void const * argument)
+{
+  /* USER CODE BEGIN KeysTask */
+  /* Infinite loop */
+  for(;;)
+  {
+	  
+
+		if(!HAL_GPIO_ReadPin(Key2_GPIO_Port, Key1_Pin))
+		{
+			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
+			write_data_i2c(&hi2c1, 's');
+		}
+		else
+		{
+			write_cmd_i2c(&hi2c1, D7_I2C|LINE_4_START);
+			write_data_i2c(&hi2c1, 'f');
+		}
+
+	  
+		osDelay(1000);
+  }
+  /* USER CODE END KeysTask */
 }
 
 /**

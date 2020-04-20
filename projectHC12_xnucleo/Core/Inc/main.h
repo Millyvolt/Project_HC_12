@@ -60,14 +60,24 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define USER_button_Pin GPIO_PIN_13
 #define USER_button_GPIO_Port GPIOC
+#define Key1_Pin GPIO_PIN_1
+#define Key1_GPIO_Port GPIOC
+#define Keys_common_Pin GPIO_PIN_0
+#define Keys_common_GPIO_Port GPIOA
+#define Key4_Pin GPIO_PIN_1
+#define Key4_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
+#define Key3_Pin GPIO_PIN_4
+#define Key3_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
 #define LED4_Pin GPIO_PIN_5
 #define LED4_GPIO_Port GPIOC
+#define Key2_Pin GPIO_PIN_0
+#define Key2_GPIO_Port GPIOB
 #define LED2_Pin GPIO_PIN_9
 #define LED2_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
