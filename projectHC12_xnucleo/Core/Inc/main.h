@@ -117,6 +117,8 @@ void Error_Handler(void);
 
 #define	KEY1_PRESS		0x01
 #define	KEY2_PRESS		0x02
+#define	KEY3_PRESS		0x04
+#define	KEY4_PRESS		0x08
 
 
 enum Buzzer_state
@@ -125,6 +127,11 @@ enum Buzzer_state
 	BUZZER_OFF
 };
 
+enum Screen_state
+{
+	SCREEN_ON,
+	SCREEN_OFF
+};
 
 
 /* USER CODE END Private defines */

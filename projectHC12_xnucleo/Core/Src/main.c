@@ -68,6 +68,7 @@ uint8_t 	but_press_counter=0, packets_old=0, keys=0;
 uint16_t	address=0x4E;
 uint32_t	time=0;
 enum		Buzzer_state	buzzer_state=BUZZER_ON;
+enum 		Screen_state	screen_state=SCREEN_ON;
 
 extern	volatile	uint8_t		gor_left_error, gor_right_error, counter_led4, packet_counter;
 
@@ -95,6 +96,7 @@ void KeysTask(void const * argument);
 
 
 void	dspl_packets(void);
+void	dspl_static_info(void);
 
 void	ErrorIndicateTask(void const * argument);
 void	UserButtonTask(void const * argument);
@@ -158,33 +160,7 @@ int main(void)
 	display_2004_i2c_init(&hi2c1);
 	
 	
-	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
-	write_data_i2c(&hi2c1, 's');
-	write_data_i2c(&hi2c1, 'k');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'd');
-	write_data_i2c(&hi2c1, ' ');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'e');
-	write_data_i2c(&hi2c1, 'v');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'y');
-	write_data_i2c(&hi2c1, 'a');
-	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
-	write_data_i2c(&hi2c1, 's');
-	write_data_i2c(&hi2c1, 'k');
-	write_data_i2c(&hi2c1, 'l');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'd');
-	write_data_i2c(&hi2c1, ' ');
-	write_data_i2c(&hi2c1, 'p');
-	write_data_i2c(&hi2c1, 'r');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'v');
-	write_data_i2c(&hi2c1, 'a');
-	write_data_i2c(&hi2c1, 'y');
-	write_data_i2c(&hi2c1, 'a');
+	dspl_static_info();
 
 	dspl_packets();
 
@@ -534,6 +510,61 @@ void	dspl_packets(void)
 	write_data_i2c(&hi2c1, packets_old%100%10+48);
 }
 
+void	dspl_static_info(void)
+{
+	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
+	write_data_i2c(&hi2c1, 's');
+	write_data_i2c(&hi2c1, 'k');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, ' ');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'e');
+	write_data_i2c(&hi2c1, 'v');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'y');
+	write_data_i2c(&hi2c1, 'a');
+	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
+	write_data_i2c(&hi2c1, 's');
+	write_data_i2c(&hi2c1, 'k');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, ' ');
+	write_data_i2c(&hi2c1, 'p');
+	write_data_i2c(&hi2c1, 'r');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'v');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'y');
+	write_data_i2c(&hi2c1, 'a');
+	write_cmd_i2c(&hi2c1, D7_I2C|(LINE_3_START+6));
+	write_data_i2c(&hi2c1, '1');
+	write_data_i2c(&hi2c1, '-');
+	write_data_i2c(&hi2c1, 'm');
+	write_data_i2c(&hi2c1, 'u');
+	write_data_i2c(&hi2c1, 't');
+	write_data_i2c(&hi2c1, 'e');
+	write_cmd_i2c(&hi2c1, D7_I2C|LINE_4_START);
+	write_data_i2c(&hi2c1, '2');
+	write_data_i2c(&hi2c1, '-');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'e');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, 'o');
+	write_data_i2c(&hi2c1, 'n');
+	write_data_i2c(&hi2c1, ' ');
+	write_data_i2c(&hi2c1, '3');
+	write_data_i2c(&hi2c1, '-');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'e');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, 'o');
+	write_data_i2c(&hi2c1, 'f');
+	write_data_i2c(&hi2c1, 'f');
+}
+
 void	ErrorIndicateTask(void const * argument)
 {
 		for(;;)
@@ -622,13 +653,6 @@ void StartDefaultTask(void const * argument)
 
   for(;;)
   {
-
-		
-//		if( HAL_GPIO_ReadPin(USER_button_GPIO_Port, USER_button_Pin) )
-//			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-//		else
-//			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-		
 		osDelay(100);
 		
 		if(gor_left_error)
@@ -636,6 +660,9 @@ void StartDefaultTask(void const * argument)
 			HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
 			if(buzzer_state==BUZZER_ON)
 				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			write_cmd_i2c(&hi2c1, D7_I2C|GOR_LEFT_STATE);
+			write_data_i2c(&hi2c1, 'e');
+			write_data_i2c(&hi2c1, 'r');
 			osDelay(100);
 		}
 		else
@@ -643,7 +670,8 @@ void StartDefaultTask(void const * argument)
 			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
 			write_cmd_i2c(&hi2c1, D7_I2C|GOR_LEFT_STATE);
-			write_data_i2c(&hi2c1, 0xB7);
+			write_data_i2c(&hi2c1, 'o');
+			write_data_i2c(&hi2c1, 'k');
 			osDelay(200);
 		}
 		
@@ -652,6 +680,9 @@ void StartDefaultTask(void const * argument)
 			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 			if(buzzer_state==BUZZER_ON)
 				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			write_cmd_i2c(&hi2c1, D7_I2C|GOR_RIGHT_STATE);
+			write_data_i2c(&hi2c1, 'e');
+			write_data_i2c(&hi2c1, 'r');
 			osDelay(100);
 		}
 		else
@@ -659,18 +690,47 @@ void StartDefaultTask(void const * argument)
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
 			write_cmd_i2c(&hi2c1, D7_I2C|GOR_RIGHT_STATE);
-			write_data_i2c(&hi2c1, 0xB7);
+			write_data_i2c(&hi2c1, 'o');
+			write_data_i2c(&hi2c1, 'k');
 			osDelay(200);
 		}
 		
 		osDelay(200);
+		
 		if(packets_old!=packet_counter)
 		{
 			packets_old = packet_counter;
 			dspl_packets();
 		}
 		
+		if(keys&KEY2_PRESS)
+		{
+			uint8_t tmp;
+			tmp = LED_I2C;												//led on
+			HAL_I2C_Master_Transmit(&hi2c1, address, &tmp, 1, 1000);
+			screen_state = SCREEN_ON;
+			keys &= ~KEY2_PRESS;
+		}
+		if(keys&KEY3_PRESS)
+		{
+			uint8_t tmp;
+			tmp = 0;													//led off
+			HAL_I2C_Master_Transmit(&hi2c1, address, &tmp, 1, 1000);
+			screen_state = SCREEN_OFF;
+			keys &= ~KEY3_PRESS;
+		}
+		if(keys&KEY1_PRESS)												//mute
+		{
+			if(buzzer_state==BUZZER_ON)
+			{
+				buzzer_state = BUZZER_OFF;
+				HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+				time = TIME_30_MIN;
+				keys &= ~KEY1_PRESS;
+			}
+		}
 		
+		osDelay(300);
 		
 //		HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_RESET);
 //		osDelay(200);
@@ -727,21 +787,14 @@ void KeysTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  
-
 		if(!HAL_GPIO_ReadPin(Key1_GPIO_Port, Key1_Pin))
-		{
-//			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
-//			write_data_i2c(&hi2c1, 'A');
-		}
-		else
-		{
-//			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
-//			write_data_i2c(&hi2c1, 'B');
-		}
-
+			keys |= KEY1_PRESS;
+		if(!HAL_GPIO_ReadPin(Key2_GPIO_Port, Key2_Pin))
+			keys |= KEY2_PRESS;
+		if(!HAL_GPIO_ReadPin(Key3_GPIO_Port, Key3_Pin))
+			keys |= KEY3_PRESS;
 	  
-		osDelay(1000);
+		osDelay(100);
   }
   /* USER CODE END KeysTask */
 }

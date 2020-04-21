@@ -10,6 +10,7 @@ uint16_t	psc_ms, psc_us;
 #ifdef		LCD_I2C_2004
 extern		I2C_HandleTypeDef 	hi2c1;
 extern		uint8_t				address;
+extern		enum 	Screen_state	screen_state;
 #endif		//LCD_I2C_2004
 
 
@@ -689,10 +690,16 @@ void	E_pulse(I2C_HandleTypeDef *hi2c)
 
 void	write_data_i2c(I2C_HandleTypeDef *hi2c, uint8_t data)
 {
-	buf = (data&0xF0)|RS_I2C|LED_I2C;
+	if(screen_state==SCREEN_OFF)
+		buf = (data&0xF0)|RS_I2C;
+	else
+		buf = (data&0xF0)|RS_I2C|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
-	buf = (data<<4)|RS_I2C|LED_I2C;
+	if(screen_state==SCREEN_OFF)
+		buf = (data<<4)|RS_I2C;
+	else
+		buf = (data<<4)|RS_I2C|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
 	delay_ms(1);
@@ -700,10 +707,16 @@ void	write_data_i2c(I2C_HandleTypeDef *hi2c, uint8_t data)
 
 void		write_cmd_i2c(I2C_HandleTypeDef *hi2c, uint8_t command)
 {
-	buf = (command&0xF0)|LED_I2C;
+	if(screen_state==SCREEN_OFF)
+		buf = command&0xF0;
+	else
+		buf = (command&0xF0)|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
-	buf = (command<<4)|LED_I2C;
+	if(screen_state==SCREEN_OFF)
+		buf = command<<4;
+	else
+		buf = (command<<4)|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
 	delay_ms(1);
