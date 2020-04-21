@@ -60,36 +60,36 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define USER_button_Pin GPIO_PIN_13
 #define USER_button_GPIO_Port GPIOC
-#define Key1_Pin GPIO_PIN_1
-#define Key1_GPIO_Port GPIOC
-#define Keys_common_Pin GPIO_PIN_0
-#define Keys_common_GPIO_Port GPIOA
-#define Key4_Pin GPIO_PIN_1
-#define Key4_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
-#define Key3_Pin GPIO_PIN_4
-#define Key3_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
+#define LED1_Pin GPIO_PIN_5
+#define LED1_GPIO_Port GPIOA
 #define LED4_Pin GPIO_PIN_5
 #define LED4_GPIO_Port GPIOC
-#define Key2_Pin GPIO_PIN_0
-#define Key2_GPIO_Port GPIOB
+#define Key3_Pin GPIO_PIN_10
+#define Key3_GPIO_Port GPIOB
+#define HC12_SET_Pin GPIO_PIN_7
+#define HC12_SET_GPIO_Port GPIOC
+#define LED3_Pin GPIO_PIN_8
+#define LED3_GPIO_Port GPIOC
 #define LED2_Pin GPIO_PIN_9
 #define LED2_GPIO_Port GPIOC
+#define Keys_common_Pin GPIO_PIN_8
+#define Keys_common_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define Buzzer_Pin GPIO_PIN_15
 #define Buzzer_GPIO_Port GPIOA
-#define SWO_Pin GPIO_PIN_3
-#define SWO_GPIO_Port GPIOB
-#define HC12_SET_Pin GPIO_PIN_5
-#define HC12_SET_GPIO_Port GPIOB
+#define Key2_Pin GPIO_PIN_3
+#define Key2_GPIO_Port GPIOB
+#define Key4_Pin GPIO_PIN_4
+#define Key4_GPIO_Port GPIOB
+#define Key1_Pin GPIO_PIN_5
+#define Key1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 
@@ -109,6 +109,15 @@ void Error_Handler(void);
 #define	TIME_10_MIN		60000
 #define	TIME_20_MIN		120000
 #define	TIME_30_MIN		180000
+
+//
+#define	PACKET_COUNTER	101
+#define	GOR_LEFT_STATE	15
+#define	GOR_RIGHT_STATE	79
+
+#define	KEY1_PRESS		0x01
+#define	KEY2_PRESS		0x02
+
 
 enum Buzzer_state
 {

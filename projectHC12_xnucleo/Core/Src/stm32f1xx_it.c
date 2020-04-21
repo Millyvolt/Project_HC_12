@@ -25,6 +25,13 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+
+
+#include "lcd_led.h"
+
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +52,13 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
+
+volatile	uint8_t gor_left_error=0, gor_right_error=0, counter_led4=0, packet_counter=0;
+extern		I2C_HandleTypeDef hi2c1;
+
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,14 +76,6 @@ extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN EV */
-
-
-
-volatile	uint8_t gor_left_error=0, gor_right_error=0, counter_led4=0;
-
-
-
-
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -196,44 +202,35 @@ void USART1_IRQHandler(void)
 	
 	data_Rx = USART1->DR;
 	
-//	while(!(USART2->SR&USART_SR_TXE))
-//			;
-//	USART2->DR = data_Rx;
-	
-//	USART1->DR = data_Rx;
-//	while(!(USART1->SR&USART_SR_TXE))
-//				;
+	while(!(USART2->SR&USART_SR_TXE))		//to COM port
+			;								//
+	USART2->DR = data_Rx;					//
 	
 	switch(data_Rx)
 	{
 		case 'L':
 			gor_left_error = GOR_ERROR;
 			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-			//counter_led4 += 1;
+			packet_counter += 1;
 			break;
 		case 'R':
 			gor_right_error = GOR_ERROR;
 			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-			//counter_led4 += 1;
+			packet_counter += 1;
 			break;
 		case '1':
 			gor_left_error = 0;
 			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-			//counter_led4 += 1;
+			packet_counter += 1;
 			break;
 		case '2':
 			gor_right_error = 0;
 			HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-			//counter_led4 += 1;
+			packet_counter += 1;
 			break;
 		default:
 			break;
 	}
-	
-//	while(!(USART1->SR&USART_SR_TXE))
-//			;
-//	USART1->DR = data_Rx;
-	
 	
 	
 	

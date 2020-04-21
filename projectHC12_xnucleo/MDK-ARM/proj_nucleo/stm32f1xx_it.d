@@ -38,3 +38,4 @@ proj_nucleo\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/
 proj_nucleo\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 proj_nucleo\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 proj_nucleo\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+proj_nucleo\stm32f1xx_it.o: ../Core/Inc/lcd_led.h

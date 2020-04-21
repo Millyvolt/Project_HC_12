@@ -64,12 +64,12 @@ osThreadId KeysHandle;
 
 
 
-uint8_t 		but_press_counter=0;
-uint16_t		address=0x4E;
-uint32_t		time=0;
-enum				Buzzer_state	buzzer_state=BUZZER_ON;
+uint8_t 	but_press_counter=0, packets_old=0, keys=0;
+uint16_t	address=0x4E;
+uint32_t	time=0;
+enum		Buzzer_state	buzzer_state=BUZZER_ON;
 
-extern	volatile	uint8_t		gor_left_error, gor_right_error, counter_led4;
+extern	volatile	uint8_t		gor_left_error, gor_right_error, counter_led4, packet_counter;
 
 osThreadId	errorTaskHandle;
 osThreadId	userButtonTaskHandle;
@@ -94,12 +94,7 @@ void KeysTask(void const * argument);
 
 
 
-//void		delay_us(uint16_t us);
-//void		delay_ms_init(void);
-//void		delay_ms(uint16_t ms);
-
-//void	display_2004_i2c_init(void);
-//void	E_pulse(void);
+void	dspl_packets(void);
 
 void	ErrorIndicateTask(void const * argument);
 void	UserButtonTask(void const * argument);
@@ -155,41 +150,45 @@ int main(void)
 	delay_init();
 	delay_ms(3);	//event generate in delay_init doesn't help
 	
-//	delay_ms(300);
-//	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	delay_ms(100);
+//	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
+//	delay_ms(1000);
 
-//	display_2004_i2c_init(&hi2c1);
-//	
-//	
-//	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
-//	write_data_i2c(&hi2c1, 's');
-//	write_data_i2c(&hi2c1, 'k');
-//	write_data_i2c(&hi2c1, 'l');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_data_i2c(&hi2c1, 'd');
-//	write_data_i2c(&hi2c1, ' ');
-//	write_data_i2c(&hi2c1, 'l');
-//	write_data_i2c(&hi2c1, 'e');
-//	write_data_i2c(&hi2c1, 'v');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_data_i2c(&hi2c1, 'y');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
-//	write_data_i2c(&hi2c1, 's');
-//	write_data_i2c(&hi2c1, 'k');
-//	write_data_i2c(&hi2c1, 'l');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_data_i2c(&hi2c1, 'd');
-//	write_data_i2c(&hi2c1, ' ');
-//	write_data_i2c(&hi2c1, 'p');
-//	write_data_i2c(&hi2c1, 'r');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_data_i2c(&hi2c1, 'v');
-//	write_data_i2c(&hi2c1, 'a');
-//	write_data_i2c(&hi2c1, 'y');
-//	write_data_i2c(&hi2c1, 'a');
+	
+	display_2004_i2c_init(&hi2c1);
 	
 	
+	write_cmd_i2c(&hi2c1, D7_I2C|LINE_1_START);
+	write_data_i2c(&hi2c1, 's');
+	write_data_i2c(&hi2c1, 'k');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, ' ');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'e');
+	write_data_i2c(&hi2c1, 'v');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'y');
+	write_data_i2c(&hi2c1, 'a');
+	write_cmd_i2c(&hi2c1, D7_I2C|LINE_2_START);
+	write_data_i2c(&hi2c1, 's');
+	write_data_i2c(&hi2c1, 'k');
+	write_data_i2c(&hi2c1, 'l');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'd');
+	write_data_i2c(&hi2c1, ' ');
+	write_data_i2c(&hi2c1, 'p');
+	write_data_i2c(&hi2c1, 'r');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'v');
+	write_data_i2c(&hi2c1, 'a');
+	write_data_i2c(&hi2c1, 'y');
+	write_data_i2c(&hi2c1, 'a');
+
+	dspl_packets();
+
+
 
   /* USER CODE END 2 */
 
@@ -215,7 +214,7 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of Keys */
-  osThreadDef(Keys, KeysTask, osPriorityIdle, 0, 128);
+  osThreadDef(Keys, KeysTask, osPriorityNormal, 0, 128);
   KeysHandle = osThreadCreate(osThread(Keys), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -229,7 +228,7 @@ int main(void)
 		userButtonTaskHandle = osThreadCreate(osThread(buttonTask), NULL);
 	
 	
-	vTaskSuspend(KeysHandle);
+	//vTaskSuspend(KeysHandle);
 	
 	
   /* USER CODE END RTOS_THREADS */
@@ -484,55 +483,42 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Keys_common_Pin|LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin|Keys_common_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED4_Pin|LED2_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, LED4_Pin|LED3_Pin|LED2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HC12_SET_GPIO_Port, HC12_SET_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : USER_button_Pin Key1_Pin */
-  GPIO_InitStruct.Pin = USER_button_Pin|Key1_Pin;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin : USER_button_Pin */
+  GPIO_InitStruct.Pin = USER_button_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(USER_button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Keys_common_Pin LD2_Pin Buzzer_Pin */
-  GPIO_InitStruct.Pin = Keys_common_Pin|LD2_Pin|Buzzer_Pin;
+  /*Configure GPIO pins : LED1_Pin Keys_common_Pin Buzzer_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|Keys_common_Pin|Buzzer_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Key4_Pin Key3_Pin */
-  GPIO_InitStruct.Pin = Key4_Pin|Key3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : LED4_Pin LED2_Pin */
-  GPIO_InitStruct.Pin = LED4_Pin|LED2_Pin;
+  /*Configure GPIO pins : LED4_Pin HC12_SET_Pin LED3_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = LED4_Pin|HC12_SET_Pin|LED3_Pin|LED2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Key2_Pin */
-  GPIO_InitStruct.Pin = Key2_Pin;
+  /*Configure GPIO pins : Key3_Pin Key2_Pin Key4_Pin Key1_Pin */
+  GPIO_InitStruct.Pin = Key3_Pin|Key2_Pin|Key4_Pin|Key1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(Key2_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : HC12_SET_Pin */
-  GPIO_InitStruct.Pin = HC12_SET_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(HC12_SET_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
@@ -540,36 +526,13 @@ static void MX_GPIO_Init(void)
 
 
 
-
-//void		delay_us(uint16_t us)
-//{
-//	SystemCoreClockUpdate();
-//	TIM3->PSC = SystemCoreClock/1000000 - 1;
-//	TIM3->ARR = us;
-//	TIM3->CR1 |= TIM_CR1_CEN;
-//	while((!TIM3->SR&TIM_SR_UIF))
-//		;
-//	TIM3->SR &= ~TIM_SR_UIF;
-//}
-
-//void	delay_ms_init(void)
-//{
-////	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-////	TIM2->CR1 |= TIM_CR1_OPM;
-//	SystemCoreClockUpdate();
-//	TIM2->PSC = SystemCoreClock/1000 - 1;
-//	TIM2->EGR |= TIM_EGR_UG;
-//	TIM2->SR &= ~TIM_SR_UIF;
-//}
-
-//void	delay_ms(uint16_t ms)
-//{
-//	TIM2->ARR = ms;
-//	TIM2->CR1 |= TIM_CR1_CEN;
-//	while(!(TIM2->SR&TIM_SR_UIF))
-//		;
-//	TIM2->SR &= ~TIM_SR_UIF;
-//}
+void	dspl_packets(void)
+{
+	write_cmd_i2c(&hi2c1, D7_I2C|PACKET_COUNTER);
+	write_data_i2c(&hi2c1, packets_old/100+48);
+	write_data_i2c(&hi2c1, packets_old%100/10+48);
+	write_data_i2c(&hi2c1, packets_old%100%10+48);
+}
 
 void	ErrorIndicateTask(void const * argument)
 {
@@ -577,19 +540,19 @@ void	ErrorIndicateTask(void const * argument)
 		{
 		if(gor_left_error)
 		{
+			HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+			osDelay(100);
+		}
+		else
+			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+		
+		if(gor_right_error)
+		{
 			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 			osDelay(100);
 		}
 		else
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-		
-		if(gor_right_error)
-		{
-			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			osDelay(100);
-		}
-		else
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 		
 		osDelay(100);
 		}
@@ -662,13 +625,29 @@ void StartDefaultTask(void const * argument)
 
 		
 //		if( HAL_GPIO_ReadPin(USER_button_GPIO_Port, USER_button_Pin) )
-//			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+//			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
 //		else
-//			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+//			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 		
 		osDelay(100);
 		
 		if(gor_left_error)
+		{
+			HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+			if(buzzer_state==BUZZER_ON)
+				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
+			osDelay(100);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+			write_cmd_i2c(&hi2c1, D7_I2C|GOR_LEFT_STATE);
+			write_data_i2c(&hi2c1, 0xB7);
+			osDelay(200);
+		}
+		
+		if(gor_right_error)
 		{
 			HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 			if(buzzer_state==BUZZER_ON)
@@ -679,21 +658,17 @@ void StartDefaultTask(void const * argument)
 		{
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+			write_cmd_i2c(&hi2c1, D7_I2C|GOR_RIGHT_STATE);
+			write_data_i2c(&hi2c1, 0xB7);
+			osDelay(200);
 		}
 		
-		if(gor_right_error)
+		osDelay(200);
+		if(packets_old!=packet_counter)
 		{
-			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			if(buzzer_state==BUZZER_ON)
-				HAL_GPIO_TogglePin(Buzzer_GPIO_Port, Buzzer_Pin);
-			osDelay(100);
+			packets_old = packet_counter;
+			dspl_packets();
 		}
-		else
-		{
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
-		}
-		
 		
 		
 		
@@ -754,15 +729,15 @@ void KeysTask(void const * argument)
   {
 	  
 
-		if(!HAL_GPIO_ReadPin(Key2_GPIO_Port, Key1_Pin))
+		if(!HAL_GPIO_ReadPin(Key1_GPIO_Port, Key1_Pin))
 		{
-			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
-			write_data_i2c(&hi2c1, 's');
+//			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
+//			write_data_i2c(&hi2c1, 'A');
 		}
 		else
 		{
-			write_cmd_i2c(&hi2c1, D7_I2C|LINE_4_START);
-			write_data_i2c(&hi2c1, 'f');
+//			write_cmd_i2c(&hi2c1, D7_I2C|LINE_3_START);
+//			write_data_i2c(&hi2c1, 'B');
 		}
 
 	  

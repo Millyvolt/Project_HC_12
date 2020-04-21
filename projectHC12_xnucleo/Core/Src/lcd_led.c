@@ -689,32 +689,24 @@ void	E_pulse(I2C_HandleTypeDef *hi2c)
 
 void	write_data_i2c(I2C_HandleTypeDef *hi2c, uint8_t data)
 {
-	//data |= LED_I2C;
-	buf = (data&0xF0)|RS_I2C;
+	buf = (data&0xF0)|RS_I2C|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
-	buf = (data<<4)|RS_I2C;
+	buf = (data<<4)|RS_I2C|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
 	delay_ms(1);
-	
-	buf = LED_I2C;												//led on
-	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 }
 
 void		write_cmd_i2c(I2C_HandleTypeDef *hi2c, uint8_t command)
 {
-	//command |= LED_I2C;
-	buf = (command&0xF0);
+	buf = (command&0xF0)|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
-	buf = (command<<4);
+	buf = (command<<4)|LED_I2C;
 	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 	E_pulse(hi2c);
 	delay_ms(1);
-	
-	buf = LED_I2C;												//led on
-	HAL_I2C_Master_Transmit(hi2c, address, &buf, 1, 1000);
 }
 
 #endif	//LCD_I2C_2004
